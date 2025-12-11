@@ -35,19 +35,17 @@ class Record:
     def remove_phone(self, phone_number):
         phone_obj = self.find_phone(phone_number)
         if phone_obj:
-            self.phone.remove(phone_obj)
+            self.phones.remove(phone_obj)
             return True
         raise ValueError(f"Телефонный номер {phone_number} не найден.")
 
 
     def edit_phone(self, old_p_numb, new_p_numb):
-        new_phone_obj = self.add_phone(new_p_numb)
-        old_phone_obj = self.find_phone(old_p_numb)
-        if old_phone_obj:
-            self.phones.remove(old_phone_obj)
-            return new_phone_obj
+        if self.find_phone(old_p_numb):
+            self.add_phone(new_p_numb)
+            self.remove_phone(old_p_numb)
+            return self.phones[-1]
         else:
-            self.phones.remove(new_phone_obj)
             raise ValueError(f"Старый номер телефона {old_p_numb} не найден для замены.")
   
 
@@ -57,6 +55,7 @@ class Record:
                 return phone 
         return None
     
+
 
     def __str__(self):
         phone_strings = '; '.join(p.value for p in self.phones)
@@ -82,14 +81,18 @@ ab = AddressBook()
 
 try:
     rec = Record('Mars')
-    rec.add_phone('1234567890')
+    rec.add_phone('1111111111')
     ab.add_record(rec)
     print(f"Добавлена запись: {ab.find('Mars')}")
-
-    ab.find('Mars').edit_phone('1234567890','1234554321')
+    
+    ab.find('Mars').edit_phone('1111111111', '2222222222')
     print(f"Добавлена запись: {ab.find('Mars')}")
-
-    ab.find('Mars').edit_phone('1234567888', '1233444554')
+    
+    ab.find('Mars').add_phone('3333333333')
+    print(f"Добавлена запись: {ab.find('Mars')}")
+    
+    ab.find('Mars').remove_phone('3333333333')
+    print(f"Добавлена запись: {ab.find('Mars')}")
 
 except ValueError as e:
     print(f"Перехвачена ошибка: {e}")
